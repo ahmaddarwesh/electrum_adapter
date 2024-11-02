@@ -300,56 +300,58 @@ class Tx with EquatableMixin {
 }
 
 extension GetTransactionMethod on RavenElectrumClient {
-  Future<Tx> getTransaction(String txHash) async {
+  Future<Map<String,dyncmic>> getTransaction(String txHash) async {
     var response = Map<String, dynamic>.from(await request(
       'blockchain.transaction.get',
       [txHash, true],
     ));
-    var vins = [
-      for (Map vin in response['vin'])
-        if (vin.keys.contains('coinbase'))
-          TxVin(coinbase: vin['coinbase'], sequence: vin['sequence'])
-        else
-          TxVin(
-              txid: vin['txid'],
-              vout: vin['vout'],
-              sequence: vin['sequence'],
-              scriptSig: TxScriptSig(
-                asm: vin['scriptSig']['asm'],
-                hex: vin['scriptSig']['hex'],
-              ))
-    ];
-    var vouts = [
-      for (var vout in response['vout'])
-        TxVout(
-            value: vout['value'],
-            n: vout['n'],
-            valueSat: vout['valueSat'] ?? 0,
-            scriptPubKey:
-                TxScriptPubKey.fromScriptPubKey(vout['scriptPubKey'] as Map))
-    ];
-    return Tx(
-      txid: response['txid'],
-      hash: response['hash'],
-      version: response['version'],
-      size: response['size'],
-      vsize: response['vsize'],
-      locktime: response['locktime'],
-      vin: vins,
-      vout: vouts,
-      hex: response['hex'],
-      blockhash: response['blockhash'],
-      height: response['height'],
-      confirmations: response['confirmations'],
-      time: response['time'],
-      blocktime: response['blocktime'],
-      memo: null, // to be implemented - look for a blank vout with op return?
-    );
+    // var vins = [
+    //   for (Map vin in response['vin'])
+    //     if (vin.keys.contains('coinbase'))
+    //       TxVin(coinbase: vin['coinbase'], sequence: vin['sequence'])
+    //     else
+    //       TxVin(
+    //           txid: vin['txid'],
+    //           vout: vin['vout'],
+    //           sequence: vin['sequence'],
+    //           scriptSig: TxScriptSig(
+    //             asm: vin['scriptSig']['asm'],
+    //             hex: vin['scriptSig']['hex'],
+    //           ))
+    // ];
+    // var vouts = [
+    //   for (var vout in response['vout'])
+    //     TxVout(
+    //         value: vout['value'],
+    //         n: vout['n'],
+    //         valueSat: vout['valueSat'] ?? 0,
+    //         scriptPubKey:
+    //             TxScriptPubKey.fromScriptPubKey(vout['scriptPubKey'] as Map))
+    // ];
+    // return Tx(
+    //   txid: response['txid'],
+    //   hash: response['hash'],
+    //   version: response['version'],
+    //   size: response['size'],
+    //   vsize: response['vsize'],
+    //   locktime: response['locktime'],
+    //   vin: vins,
+    //   vout: vouts,
+    //   hex: response['hex'],
+    //   blockhash: response['blockhash'],
+    //   height: response['height'],
+    //   confirmations: response['confirmations'],
+    //   time: response['time'],
+    //   blocktime: response['blocktime'],
+    //   memo: null, // to be implemented - look for a blank vout with op return?
+    // );
+
+    return response;
   }
 
   /// returns histories in the same order as txHashes passed in
-  Future<List<Tx>> getTransactions(Iterable<String> txHashes) async {
-    var futures = <Future<Tx>>[];
+  Future<List<Map<String,dyncmic>>> getTransactions(Iterable<String> txHashes) async {
+    var futures = <Future<Map<String,dyncmic>>>[];
     if (txHashes.isNotEmpty) {
       peer.withBatch(() {
         for (var txHash in txHashes) {
@@ -357,11 +359,11 @@ extension GetTransactionMethod on RavenElectrumClient {
         }
       });
     }
-    return await Future.wait<Tx>(futures);
+    return await Future.wait<Map<String,dyncmic>>(futures);
   }
 
-  List<Future<Tx>> getTransactionsFutures(Iterable<String> txHashes) {
-    var futures = <Future<Tx>>[];
+  List<Future<Map<String,dyncmic>>> getTransactionsFutures(Iterable<String> txHashes) {
+    var futures = <Future<Map<String,dyncmic>>>[];
     if (txHashes.isNotEmpty) {
       peer.withBatch(() {
         for (var txHash in txHashes) {
