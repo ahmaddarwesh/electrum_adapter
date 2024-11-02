@@ -324,7 +324,7 @@ extension GetTransactionMethod on RavenElectrumClient {
         TxVout(
             value: vout['value'],
             n: vout['n'],
-            valueSat: vout['valueSat'],
+            valueSat: vout['valueSat'] ?? 0,
             scriptPubKey:
                 TxScriptPubKey.fromScriptPubKey(vout['scriptPubKey'] as Map))
     ];
