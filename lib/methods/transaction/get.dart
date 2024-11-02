@@ -300,7 +300,7 @@ class Tx with EquatableMixin {
 }
 
 extension GetTransactionMethod on RavenElectrumClient {
-  Future<Map<String,dyncmic>> getTransaction(String txHash) async {
+  Future<Map<String,dynamic>> getTransaction(String txHash) async {
     var response = Map<String, dynamic>.from(await request(
       'blockchain.transaction.get',
       [txHash, true],
@@ -350,8 +350,8 @@ extension GetTransactionMethod on RavenElectrumClient {
   }
 
   /// returns histories in the same order as txHashes passed in
-  Future<List<Map<String,dyncmic>>> getTransactions(Iterable<String> txHashes) async {
-    var futures = <Future<Map<String,dyncmic>>>[];
+  Future<List<Map<String,dynamic>>> getTransactions(Iterable<String> txHashes) async {
+    var futures = <Future<Map<String,dynamic>>>[];
     if (txHashes.isNotEmpty) {
       peer.withBatch(() {
         for (var txHash in txHashes) {
@@ -359,11 +359,11 @@ extension GetTransactionMethod on RavenElectrumClient {
         }
       });
     }
-    return await Future.wait<Map<String,dyncmic>>(futures);
+    return await Future.wait<Map<String,dynamic>>(futures);
   }
 
-  List<Future<Map<String,dyncmic>>> getTransactionsFutures(Iterable<String> txHashes) {
-    var futures = <Future<Map<String,dyncmic>>>[];
+  List<Future<Map<String,dynamic>>> getTransactionsFutures(Iterable<String> txHashes) {
+    var futures = <Future<Map<String,dynamic>>>[];
     if (txHashes.isNotEmpty) {
       peer.withBatch(() {
         for (var txHash in txHashes) {
